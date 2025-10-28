@@ -1,0 +1,32 @@
+<!doctype html>
+<html>
+    <head>
+        <title>Clear Session</title>
+    </head>
+    <body>
+        <h1>Clear User Session</h1>
+        <button onclick="clearSession()">Clear Session</button>
+        <button onclick="checkSession()">Check Current Session</button>
+        <div id="result"></div>
+
+        <script>
+            function clearSession() {
+                localStorage.removeItem('currentUser');
+                localStorage.removeItem('isLoggedIn');
+                document.getElementById('result').innerHTML = 'Session cleared!';
+            }
+
+            function checkSession() {
+                const currentUser = localStorage.getItem('currentUser');
+                const isLoggedIn = localStorage.getItem('isLoggedIn');
+
+                document.getElementById('result').innerHTML = `
+                <h3>Current Session:</h3>
+                <p><strong>isLoggedIn:</strong> ${isLoggedIn}</p>
+                <p><strong>currentUser:</strong></p>
+                <pre>${currentUser ? JSON.stringify(JSON.parse(currentUser), null, 2) : 'null'}</pre>
+            `;
+            }
+        </script>
+    </body>
+</html>

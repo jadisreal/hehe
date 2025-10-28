@@ -1,0 +1,54 @@
+<!doctype html>
+<html>
+    <head>
+        <title>Test Doctor Authentication</title>
+    </head>
+    <body>
+        <h1>Test Doctor Authentication</h1>
+        <button onclick="testDoctorAuth()">Test sampon_230000001231@uic.edu.ph</button>
+        <div id="result"></div>
+
+        <script>
+            async function testDoctorAuth() {
+                const resultDiv = document.getElementById('result');
+                resultDiv.innerHTML = 'Testing doctor authentication...';
+
+                try {
+                    const response = await fetch('/api/auth/google', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            token: 'fake_token',
+                            userData: {
+                                email: 'sampon_230000001231@uic.edu.ph',
+                                name: 'Test Doctor User',
+                            },
+                        }),
+                    });
+
+                    console.log('Response status:', response.status);
+
+                    if (response.ok) {
+                        const data = await response.json();
+                        console.log('Response data:', data);
+                        resultDiv.innerHTML = `
+                        <h3>Success!</h3>
+                        <p><strong>Status:</strong> ${data.status}</p>
+                        <p><strong>Name:</strong> ${data.user?.name}</p>
+                        <p><strong>Email:</strong> ${data.user?.email}</p>
+                        <p><strong>Role:</strong> ${data.user?.role}</p>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    `;
+                    } else {
+                        const errorText = await response.text();
+                        console.error('Error:', response.status, errorText);
+                        resultDiv.innerHTML = `<p style="color: red;">Error: ${response.status} - ${errorText}</p>`;
+                    }
+                } catch (error) {
+                    console.error('Fetch error:', error);
+                    resultDiv.innerHTML = `<p style="color: red;">Fetch error: ${error.message}</p>`;
+                }
+            }
+        </script>
+    </body>
+</html>

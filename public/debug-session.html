@@ -1,0 +1,99 @@
+<!doctype html>
+<html>
+    <head>
+        <title>Clear User Session</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                padding: 20px;
+            }
+            button {
+                padding: 10px 20px;
+                margin: 10px;
+                font-size: 16px;
+            }
+            .info {
+                background: #f0f8ff;
+                padding: 15px;
+                border-radius: 5px;
+                margin: 10px 0;
+            }
+            .success {
+                background: #d4edda;
+                padding: 15px;
+                border-radius: 5px;
+                margin: 10px 0;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>🔧 Session Debug & Clear Tool</h1>
+
+        <div class="info">
+            <h3>Current Session Data:</h3>
+            <div id="sessionData">Loading...</div>
+        </div>
+
+        <button onclick="showCurrentSession()">🔍 Show Current Session</button>
+        <button onclick="clearUserSession()">🗑️ Clear User Session</button>
+        <button onclick="testAuthEndpoint()">🔄 Test Auth Endpoint</button>
+
+        <div id="result"></div>
+
+        <script>
+            function showCurrentSession() {
+                const currentUser = localStorage.getItem('currentUser');
+                const isLoggedIn = localStorage.getItem('isLoggedIn');
+
+                document.getElementById('sessionData').innerHTML = `
+                <strong>isLoggedIn:</strong> ${isLoggedIn}<br>
+                <strong>currentUser:</strong> <pre>${currentUser ? JSON.stringify(JSON.parse(currentUser), null, 2) : 'null'}</pre>
+            `;
+            }
+
+            function clearUserSession() {
+                localStorage.removeItem('currentUser');
+                localStorage.removeItem('isLoggedIn');
+
+                document.getElementById('result').innerHTML = `
+                <div class="success">✅ User session cleared! Please log in again.</div>
+            `;
+
+                showCurrentSession();
+            }
+
+            async function testAuthEndpoint() {
+                const email = 'jdavid_240000000175@uic.edu.ph';
+
+                try {
+                    const response = await fetch('/api/users/by-email', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-Requested-With': 'XMLHttpRequest',
+                        },
+                        body: JSON.stringify({ email }),
+                    });
+
+                    const data = await response.json();
+
+                    document.getElementById('result').innerHTML = `
+                    <div class="info">
+                        <h3>API Response for ${email}:</h3>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    </div>
+                `;
+                } catch (error) {
+                    document.getElementById('result').innerHTML = `
+                    <div style="background: #f8d7da; padding: 15px; border-radius: 5px;">
+                        ❌ Error: ${error.message}
+                    </div>
+                `;
+                }
+            }
+
+            // Show session data on load
+            showCurrentSession();
+        </script>
+    </body>
+</html>

@@ -1,0 +1,47 @@
+<!doctype html>
+<html>
+    <head>
+        <title>Test Auth</title>
+    </head>
+    <body>
+        <h1>Test Authentication</h1>
+        <button onclick="testAuth()">Test Auth Endpoint</button>
+        <div id="result"></div>
+
+        <script>
+            async function testAuth() {
+                const resultDiv = document.getElementById('result');
+                resultDiv.innerHTML = 'Testing...';
+
+                try {
+                    // Create a fake token for testing (this would normally come from Google)
+                    const testToken = 'fake_token_for_testing';
+
+                    const response = await fetch('/api/auth/google', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            token: testToken,
+                            userData: { email: 'sampon_230000001231@uic.edu.ph' },
+                        }),
+                    });
+
+                    console.log('Response status:', response.status);
+
+                    if (response.ok) {
+                        const data = await response.json();
+                        console.log('Response data:', data);
+                        resultDiv.innerHTML = '<pre>' + JSON.stringify(data, null, 2) + '</pre>';
+                    } else {
+                        const errorText = await response.text();
+                        console.error('Error:', response.status, errorText);
+                        resultDiv.innerHTML = 'Error: ' + response.status + ' - ' + errorText;
+                    }
+                } catch (error) {
+                    console.error('Fetch error:', error);
+                    resultDiv.innerHTML = 'Fetch error: ' + error.message;
+                }
+            }
+        </script>
+    </body>
+</html>
